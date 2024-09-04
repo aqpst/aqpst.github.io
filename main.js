@@ -33,12 +33,29 @@ function getRadio(id) {
     return val;
 }
 
+function isChecked(id) {
+    try {
+        return byID(id).checked;
+    } catch(err) {
+        alert("error: Attempted to look at non-existent checkbox \"" + id + "\"")
+        return false
+    }
+}
+
 function targetVersionChanged() {
     var version = getRadio("targetVersion");
     if (version == "G") {
         itemCategoryList.forEach(category => disableField(category));
+        disableField("mutationSelector");
     } else {
         itemCategoryList.forEach(category => enableField(category));
+        enableField("mutationSelector");
+    }
+
+    if (version == "I") {
+        enableField("capitalism");
+    } else {
+        disableField("capitalism");
     }
 }
 
@@ -64,8 +81,6 @@ function modIDChanged(elem) {
     manualModID = !(elem.value.length == 0);
 }
 
-
-
 function addPanel() {
     var creatures = byID("creatures");
     var section = byID("creatureButton").content.cloneNode(true);
@@ -89,7 +104,6 @@ function toggleCollapsible(elem) {
 function deleteSection(elem) {
     elem.parentElement.remove();
 }
-
 
 function generateMonsterMod() {
     var i = 0;
@@ -153,8 +167,6 @@ function generateMonsterMod() {
     return [monsterAdjustments, monsterExclusions];
 }
 
-const noop = ()=>{}
-
 function generateItemCategories() {
     var categories = []
     var version = getRadio("targetVersion");
@@ -179,9 +191,22 @@ function generateItemCategories() {
 }
 
 function generateJSON() {
+
+    var version = getRadio("targetVersion");
+
+    var modInfo = [];
+    var gameBalance = [];
+    var monBlacklist = [];
+    var itemCategories = [];
+    var furnitureMedical = [];
+    var portalStormEOC = [];
+
+    //
+    // mod "header"
+    //
+
     var modName = byID("modName").value.trim();
     var modID = byID("modID").value;
-    var version = getRadio("targetVersion");
 
     if (modName.length == 0) {
         modName = "My mod";
@@ -201,13 +226,17 @@ function generateJSON() {
         "dependencies": [ "dda" ],
     }
 
+    //
+    // monster changes
+    //
+
     let [monsterAdjustments, monsterExclusions] = generateMonsterMod();
 
-    var modInfo = [];
+
     modInfo.push(modHeader);
     monsterAdjustments.forEach(adjustment => modInfo.push(adjustment));
 
-    var monBlacklist = [];
+
     if (monsterExclusions.length > 0) {
         monBlacklist.push(
             {
@@ -217,14 +246,68 @@ function generateJSON() {
         );
     }
 
-    var itemCategories = [];
+    //
+    // item categories
+    //
+
     if (version == "H" || version == "I") {
         itemCategories = generateItemCategories();
     }
 
+    //
+    // specials
+    //
+
+    if (isChecked("safeAutodoc")) {
+        furnitureMedical.push(autodoc);
+    }
+
+    if (isChecked("mutationSelector") && version != "G") {
+        gameBalance.push(mutationSelector);
+    }
+
+    if (isChecked("capitalism") && version == "I") {
+        gameBalance.push(capitalism);
+    }
+
+    if (isChecked("noRevive")) {
+        modInfo.push(noRevive);
+    }
+
+    if (isChecked("weakEMP")) {
+        gameBalance.push(weakEMP);
+    }
+
+    if (isChecked("noPortal")) {
+        portalStormEOC.push(portal1);
+        portalStormEOC.push(portal2);
+        portalStormEOC.push(portal3);
+    }
+
+    if (isChecked("vehicleNoFuel") || isChecked("vehicleBroken")) {
+        gameBalance.push(vehicleOverride);
+    }
+
+    if (isChecked("vehicleNoFuel")) {
+        gameBalance.push(vehicleNoFuel);
+    }
+
+    if (isChecked("vehicleBroken")) {
+        gameBalance.push(vehicleBroken);
+    }
+
+    //
+    // Generate the zip file
+    //
+
     const zip = new JSZip();
     const folder = zip.folder("data/mods/" + modID);
+
     folder.file("modinfo.json", JSON.stringify(modInfo, null, 2));
+
+    if (furnitureMedical.length > 0) {
+        folder.file("furniture_medical.json", JSON.stringify(furnitureMedical, null, 2));
+    }
 
     if (monBlacklist.length > 0) {
         folder.file("mon_blacklist.json", JSON.stringify(monBlacklist, null, 2));
@@ -232,6 +315,14 @@ function generateJSON() {
 
     if (itemCategories.length > 0) {
         folder.file("item_category.json", JSON.stringify(itemCategories, null, 2));
+    }
+
+    if (gameBalance.length > 0) {
+        folder.file("game_balance.json", JSON.stringify(gameBalance, null, 2));
+    }
+
+    if (portalStormEOC.length > 0) {
+        folder.file("portal_storm_effect_on_condition.json", JSON.stringify(portalStormEOC, null, 2));
     }
 
     zip.generateAsync({type: "blob", compression: "DEFLATE"}).then(function(content) {
