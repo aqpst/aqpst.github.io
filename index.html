@@ -11,6 +11,7 @@
     <script src="include/FileSaver.min.js"></script>
     <script src="include/jszip.min.js"></script>
     <script src="itemCategories.js"></script>
+    <script src="specialConstants.js"></script>
     <script src="main.js"></script>
     <title>CDDA Mini Mod Maker</title>
 </head>
@@ -18,7 +19,7 @@
 <body>
     <header>
         <h1>CDDA Mini Mod Maker</h1>
-        <h5>Version 0.0.1</h5>
+        <h5>Version 0.0.2</h5>
         
         <noscript style="color:red"><h5>Javascript is required.</h5></noscript>
     </header>
@@ -49,8 +50,35 @@
 
     </div>
 
-    <h4>Special Tweaks (TBD)</h4>
+    <h4>Special Tweaks (mostly untested)</h4>
 
+    <div>
+        <input type="checkbox" id="vehicleBroken" name="vehicleBroken"><label for="vehicleBroken">Vehicles spawn as wrecks</label>
+    </div>
+    <div>
+        <input type="checkbox" id="vehicleNoFuel" name="vehicleNoFuel"><label for="vehicleNoFuel">Vehicles spawn with no fuel</label>
+    </div>
+    <div>
+        <input type="checkbox" id="noPortal" name="noPortal"><label for="noPortal">Disable portal storms</label>
+    </div>
+    <div>
+        <input type="checkbox" id="noRust" name="noRust" disabled><label for="noRust"><s>Disable skill rust</s> get a <a href="https://github.com/John-Candlebury/CDDA-Minimods" target="_blank" rel="noopener noreferrer">separate mod here</a></label>
+    </div>
+    <div>
+        <input type="checkbox" id="weakEMP" name="weakEMP"><label for="weakEMP">Disable EMP breaking electronics</label>
+    </div>
+    <div>
+        <input type="checkbox" id="noRevive" name="noRevive"><label for="noRevive">Disable zombie revival</label>
+    </div>
+    <div>
+        <input type="checkbox" id="capitalism" name="capitalism" disabled><label for="capitalism">Enable capitalism (???)</label>
+    </div>
+    <div>
+        <input type="checkbox" id="mutationSelector" name="mutationSelector" disabled><label for="mutationSelector">Enable mutation picker</label>
+    </div>
+    <div>
+        <input type="checkbox" id="safeAutodoc" name="safeAutodoc"><label for="safeAutodoc">Safe autodoc</label>
+    </div>
 
     <h4>Item Category Spawn Rates</h4>
 
@@ -229,10 +257,5 @@
     </template>
 
 </body>
-
-
-
-
-
 
 </html>
