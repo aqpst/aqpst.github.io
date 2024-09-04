@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="A simple mod generator for Cataclysm: Dark Days Ahead.">
+    <meta name="keywords" content="cdda, cataclysm, mod generator, mod tool, mini mod maker">
+    <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css">
+    <link rel="stylesheet" href="mod.css">
+    <script src="include/FileSaver.min.js"></script>
+    <script src="include/jszip.min.js"></script>
+    <script src="itemCategories.js"></script>
+    <script src="main.js"></script>
+    <title>CDDA Mini Mod Maker</title>
+</head>
+
+<body>
+    <header>
+        <h1>CDDA Mini Mod Maker</h1>
+        <h5>Version 0.0.1</h5>
+        
+        <noscript style="color:red"><h5>Javascript is required.</h5></noscript>
+    </header>
+
+    <p>Select target game version</p>
+    <form id="targetVersion" name="targetVersion" onchange="targetVersionChanged();">
+    <input name="targetVersion" type="radio" value="G" checked="checked" />
+    <label for="targetVersion">0.G Stable</label>
+    <br>
+    <input name="targetVersion" type="radio" value="H" />
+    <label for="targetVersion">0.H Release Candidate</label>
+    <br>
+    <input name="targetVersion" type="radio" value="I" />
+    <label for="targetVersion">Latest Experimental (as of 2024-08-16)</label>
+    </form>
+    <br>
+
+    <label for="modName">Mod name:</label>
+    <input type="text" id="modName" name="modName" placeholder="My mod" oninput="modNameChanged(this);">
+    <label for="modID">Mod ID:</label>
+    <input type="text" id="modID" name="modID" placeholder="my_mod" oninput="modIDChanged(this);">
+    <br>
+
+    <button type="button" class="adder" onclick="addPanel();">Add Creature Type Modification</button>
+
+    <!-- Filled in from template -->
+    <div class="creatureDiv" id="creatures">
+
+    </div>
+
+    <h4>Special Tweaks (TBD)</h4>
+
+
+    <h4>Item Category Spawn Rates</h4>
+
+    <div class="grid">
+        <div>
+            <label for="ammo">Ammo:</label>
+            <input type="number" id="ammo" min="0.0" max="10.0" step="0.1" value="1.00" disabled>
+        </div>
+        <div>
+            <label for="armor">Armor:</label>
+            <input type="number" id="armor" min="0.0" max="10.0" step="0.1" value="1.00" disabled>
+        </div>
+        <div>
+            <label for="artifacts">Artifacts:</label>
+            <input type="number" id="artifacts" min="0.0" max="10.0" step="0.1" value="1.00" disabled>
+        </div>
+        <div>
+            <label for="bionics">Bionics:</label>
+            <input type="number" id="bionics" min="0.0" max="10.0" step="0.1" value="1.00" disabled>
+        </div>
+        <div>
+            <label for="books">Books:</label>
+            <input type="number" id="books" min="0.0" max="10.0" step="0.1" value="1.00" disabled>
+        </div>
+        <div>
+            <label for="chems">Chems:</label>
+            <input type="number" id="chems" min="0.0" max="10.0" step="0.1" value="1.00" disabled>
+        </div>
+        <div>
+            <label for="clothing">Clothing:</label>
+            <input type="number" id="clothing" min="0.0" max="10.0" step="0.1" value="1.00" disabled>
+        </div>
+        <div>
+            <label for="container">Container:</label>
+            <input type="number" id="container" min="0.0" max="10.0" step="0.1" value="1.00" disabled>
+        </div>
+        <div>
+            <label for="corpses">Corpses:</label>
+            <input type="number" id="corpses" min="0.0" max="10.0" step="0.1" value="1.00" disabled>
+        </div>
+        <div>
+            <label for="currency">Currency:</label>
+            <input type="number" id="currency" min="0.0" max="10.0" step="0.1" value="1.00" disabled>
+        </div>
+        <div>
+            <label for="drugs">Drugs:</label>
+            <input type="number" id="drugs" min="0.0" max="10.0" step="0.1" value="1.00" disabled>
+        </div>
+        <div>
+            <label for="food">Food:</label>
+            <input type="number" id="food" min="0.0" max="10.0" step="0.1" value="1.00" disabled>
+        </div>
+        <div>
+            <label for="fuel">Fuel:</label>
+            <input type="number" id="fuel" min="0.0" max="10.0" step="0.1" value="1.00" disabled>
+        </div>
+        <div>
+            <label for="guns">Guns:</label>
+            <input type="number" id="guns" min="0.0" max="10.0" step="0.1" value="1.00" disabled>
+        </div>
+        <div>
+            <label for="keys">Keys:</label>
+            <input type="number" id="keys" min="0.0" max="10.0" step="0.1" value="1.00" disabled>
+        </div>
+        <div>
+            <label for="ma_manuals">Martial arts manuals:</label>
+            <input type="number" id="ma_manuals" min="0.0" max="10.0" step="0.1" value="1.00" disabled>
+        </div>
+        <div>
+            <label for="magazines">Magazines:</label>
+            <input type="number" id="magazines" min="0.0" max="10.0" step="0.1" value="1.00" disabled>
+        </div>
+        <div>
+            <label for="manuals">Manuals:</label>
+            <input type="number" id="manuals" min="0.0" max="10.0" step="0.1" value="1.00" disabled>
+        </div>
+        <div>
+            <label for="maps">Maps:</label>
+            <input type="number" id="maps" min="0.0" max="10.0" step="0.1" value="1.00" disabled>
+        </div>
+        <div>
+            <label for="mods">Mods:</label>
+            <input type="number" id="mods" min="0.0" max="10.0" step="0.1" value="1.00" disabled>
+        </div>
+        <div>
+            <label for="mutagen">Mutagen:</label>
+            <input type="number" id="mutagen" min="0.0" max="10.0" step="0.1" value="1.00" disabled>
+        </div>
+        <div>
+            <label for="other">Other:</label>
+            <input type="number" id="other" min="0.0" max="10.0" step="0.1" value="1.00" disabled>
+        </div>
+        <div>
+            <label for="seeds">Seeds:</label>
+            <input type="number" id="seeds" min="0.0" max="10.0" step="0.1" value="1.00" disabled>
+        </div>
+        <div>
+            <label for="spare_parts">Spare parts:</label>
+            <input type="number" id="spare_parts" min="0.0" max="10.0" step="0.1" value="1.00" disabled>
+        </div>
+        <div>
+            <label for="tool_magazine">Tool magazines:</label>
+            <input type="number" id="tool_magazine" min="0.0" max="10.0" step="0.1" value="1.00" disabled>
+        </div>
+        <div>
+            <label for="tools">Tools:</label>
+            <input type="number" id="tools" min="0.0" max="10.0" step="0.1" value="1.00" disabled>
+        </div>
+        <div>
+            <label for="traps">Traps:</label>
+            <input type="number" id="traps" min="0.0" max="10.0" step="0.1" value="1.00" disabled>
+        </div>
+        <div>
+            <label for="veh_parts">Vehicle parts:</label>
+            <input type="number" id="veh_parts" min="0.0" max="10.0" step="0.1" value="1.00" disabled>
+        </div>
+        <div>
+            <label for="weapons">Weapons:</label>
+            <input type="number" id="weapons" min="0.0" max="10.0" step="0.1" value="1.00" disabled>
+        </div>
+    </div>
+
+    <h4>Other Numeric Changes (TBD)</h4>
+
+    <button type="button" class="generate" onclick="generateJSON();">Generate</button>
+
+
+
+    <template id="creatureButton">
+        <div class="creature" id="creature">
+            <select name="species" id="species">Type
+                <option value="aberration">Aberration</option>
+                <option value="amphibian">Amphibian</option>
+                <option value="bird">Bird</option>
+                <option value="centipede">Centipede</option>
+                <option value="cyborg">Cyborg</option>
+                <option value="feral">Feral</option>
+                <option value="fish">Fish</option>
+                <option value="fungus">Fungus</option>
+                <option value="hallucination">Hallucination</option>
+                <option value="horror">Horror</option>
+                <option value="human">Human</option>
+                <option value="insect">Insect</option>
+                <option value="insect_flying">Insect_flying</option>
+                <option value="kraken">Kraken</option>
+                <option value="leech_plant">Leech_plant</option>
+                <option value="mammal">Mammal</option>
+                <option value="migo">Migo</option>
+                <option value="mollusk">Mollusk</option>
+                <option value="mutant">Mutant</option>
+                <option value="nether">Nether</option>
+                <option value="nether_burrowing">Nether_burrowing</option>
+                <option value="nether_emanation">Nether_emanation</option>
+                <option value="plant">Plant</option>
+                <option value="reptile">Reptile</option>
+                <option value="robot">Robot</option>
+                <option value="robot_flying">Robot_flying</option>
+                <option value="slime">Slime</option>
+                <option value="spider">Spider</option>
+                <option value="worm">Worm</option>
+                <option value="zombie" selected>Zombie</option>
+            </select>
+            <button type="button" class="collapsible" onclick="toggleCollapsible(this);">Expand</button>
+            <button type="button" class="deleteSection" onclick="deleteSection(this);">Delete</button>
+            <div class="content">
+                <div class="flex">
+                    <div>Health (%) <input type="number" id="health" min="0" max="1000" step="10" value="100"></div>
+                    <div>Speed (%) <input type="number" id="speed" min="0" max="1000" step="10" value="100"></div>
+                    <div>
+                        <label><input type="checkbox" id="exclude">Exclude</label>
+                        <label><input type="checkbox" id="noBleed">Disable bleeding</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+
+</body>
+
+
+
+
+
+
+</html>

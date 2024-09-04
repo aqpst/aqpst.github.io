@@ -1,0 +1,64 @@
+h1{
+    line-height: 5px;
+    padding: 1rem 0 0 0;
+  }
+
+h4 {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+}
+
+h5{
+    line-height: 5px;
+    padding: -1rem;
+}
+
+body {
+  padding-bottom: 400px;
+}
+
+body > header {
+    padding: 0.5rem 0.5rem 0.5rem 0.5rem;
+}
+
+noscript {
+  background-color: red;
+}
+
+.active, .collapsible:hover {
+  background-color: #ccc;
+}
+
+.creature {
+  padding: 5px 0;
+  display: block;
+}
+
+.deleteSection {
+  float: right;
+}
+
+.content {
+  padding: 0 18px;
+  display: none;
+  overflow: hidden;
+  border-radius: var(--standard-border-radius);
+  background-color: #c2cddf;
+  @media (prefers-color-scheme: dark) {
+  background-color: #373737;
+  }
+}
+
+.flex {
+  padding: 5px 0 3px;
+  display: flex;
+}
+
+.flex > div {
+  padding: 0 10px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+}
